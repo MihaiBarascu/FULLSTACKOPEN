@@ -42,10 +42,8 @@ const App = () => {
     setFilter(value);
 
     setFilteredPersons(
-      persons.filter(
-        (person) =>
-          person.name.includes(value.toUpperCase()) ||
-          person.name.includes(value.toLowerCase())
+      persons.filter((person) =>
+        person.name.toLowerCase().includes(value.toLowerCase())
       )
     );
   };
