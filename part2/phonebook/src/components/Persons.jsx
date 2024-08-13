@@ -1,10 +1,14 @@
-const Persons = ({ filteredPersons }) => {
+import Person from "./Person";
+const Persons = ({ persons, onDelete }) => {
   return (
     <div>
-      {filteredPersons.map((person) => (
-        <div key={person.name}>
-          {person.name} {person.number}
-        </div>
+      {persons.map((person) => (
+        <Person
+          key={person.id}
+          name={person.name}
+          number={person.number}
+          onDelete={() => onDelete(person.id)}
+        />
       ))}
     </div>
   );
