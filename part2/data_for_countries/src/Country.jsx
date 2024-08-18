@@ -1,11 +1,13 @@
-const Country = (country) => {
-  const languages = Object.entries(country.languages);
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-  const [apiKey, setApiKey] = useState(import.meta.env.VITE_SOME_KEY);
+const Country = ({ country }) => {
+  const languages = Object.entries(country.languages);
+  const apiKey = import.meta.env.VITE_SOME_KEY;
+  const countryFlagURL = country.flags.png;
   const [temperature, setTemperature] = useState(undefined);
   const [wind, setWind] = useState(undefined);
   const [imgUrl, setImgUrl] = useState(undefined);
-
   useEffect(() => {
     axios
       .get(
@@ -19,24 +21,25 @@ const Country = (country) => {
         );
       });
   }, [country]);
-
   return (
     <div>
       <h2>{country.name.common}</h2>
       <div> capital {country.capital.map((capital) => capital)}</div>
       <div> area {country.area} </div>
-      <h3>languages:</h3>
-      <ul>
-        {languages.map(([key, value]) => (
-          <li key={key}>{value}</li>
-        ))}
-      </ul>
-      <img style={{ maxWidth: 150 }} src={country.flags.png} alt="" />
 
+      <p>
+        <b>languages</b>
+      </p>
+      <ul>
+        {languages ? languages.map((l) => <li key={l[1]}>{l[1]}</li>) : null}
+      </ul>
+      <img style={{ width: 150 }} src={countryFlagURL} alt="" />
       {temperature && wind && imgUrl ? (
         <div>
           <h3>Weather in {country.capital[0]}</h3>
+
           <div>temperature {temperature} Celsius</div>
+
           <img src={imgUrl} />
           <div>wind {wind} m/s</div>
         </div>

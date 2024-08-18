@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import FindCountries from "./FindCountries";
 import Countries from "./Countries";
 import axios from "axios";
+import Country from "./Country";
 
 function App() {
   const [countries, setCountries] = useState([]);
@@ -34,7 +35,10 @@ function App() {
       <FindCountries filter={filter} onFilterChange={handleFilterChange} />
 
       {countriesToShow.length === 1 ? (
-        <Country country={countriesToShow[0]} />
+        <Country
+          key={countriesToShow[0].name.common}
+          country={countriesToShow[0]}
+        />
       ) : (
         <Countries onShowClick={handleShowClick} countries={countriesToShow} />
       )}
