@@ -1,0 +1,5 @@
+POST http://localhost:3001/api/notes/112
+Content-Type : application/json
+
+{"content":"is a pretty handy tool",
+"important":true}
