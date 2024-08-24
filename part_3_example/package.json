@@ -4,9 +4,13 @@
   "description": "example app",
   "main": "index.js",
   "scripts": {
+    "build:ui": "@powershell Remove-Item -Recurse -Force dist && cd ../../part2-notes-frontend-part3-1 && npm run build && @powershell Copy-Item dist -Recurse ../FULLSTACKOPEN/part_3_example",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "fly deploy",
+    "deploy:full": "npm run build:ui && npm run deploy",
+    "logs:prod": "fly logs"
   },
   "repository": {
     "type": "git",
