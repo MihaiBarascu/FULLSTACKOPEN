@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:3001/api/persons";
+const url = "https://phonebook-b.fly.dev/api/persons";
 
 const getAll = () => {
   return axios.get(url).then((response) => response.data);
