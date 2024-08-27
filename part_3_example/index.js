@@ -28,23 +28,7 @@ app.use(
 );
 
 app.use(express.static("dist"));
-let notes = [
-  {
-    id: "1",
-    content: "HTML is easy",
-    important: true,
-  },
-  {
-    id: "2",
-    content: "Browser can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true,
-  },
-];
+
 app.get("/", (request, response) => {
   response.send("<h1>Hello world!</h1>");
 });
@@ -57,15 +41,25 @@ app.get("/api/notes", (request, response) => {
 
 app.get("/api/notes/:id", (request, response) => {
   const id = request.params.id;
-  Note.findById(id).then((note) => {
-    response.json(note);
-  });
+  Note.findById(id)
+    .then((note) => {
+      if (note) {
+        response.json(note);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
-app.delete("/api/notes/:id", (request, response) => {
-  const id = request.params.id;
-  notes = notes.filter((note) => note.id !== id);
-  response.status(204).end();
+app.delete("/api/notes/:id", (request, response, next) => {
+  Note.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 const generateId = () =>
@@ -89,10 +83,16 @@ app.post("/api/notes", (request, response) => {
   });
 });
 
-app.put("/api/notes/:id", (req, res) => {
-  const id = req.params.id;
-  notes = notes.map((n) => (n.id === id ? req.body : n));
-  res.status(200).json(req.body);
+app.put("/api/notes/:id", (req, res, next) => {
+  const body = req.body;
+
+  const note = { content: body.content, important: body.important };
+
+  Note.findByIdAndUpdate(req.params.id, note, { new: true })
+    .then((updatedNote) => {
+      res.json(updatedNote);
+    })
+    .catch((error) => next(error));
 });
 
 const unknownEndpoint = (request, response) => {
@@ -100,6 +100,17 @@ const unknownEndpoint = (request, response) => {
 };
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformed id" });
+  }
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT);

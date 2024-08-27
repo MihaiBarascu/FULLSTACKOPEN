@@ -1,0 +1,6 @@
+PUT http://localhost:3001/api/notes/66cded556cd0e5dca5ad07ef
+Content-Type: application/json
+
+{"content":"findByIdAndUpdate uses regular object not new note is logic",
+"important":false
+}
