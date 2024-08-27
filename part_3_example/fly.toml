@@ -1,15 +1,12 @@
-# fly.toml app configuration file generated for notes-app-part3 on 2024-08-23T16:31:56+03:00
+# fly.toml app configuration file generated for notes-b on 2024-08-26T16:48:12+03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'notes-app-part3'
+app = 'notes-b'
 primary_region = 'otp'
 
 [build]
-
-[env]
-  PORT = "3000"
 
 [http_service]
   internal_port = 3000
@@ -20,6 +17,4 @@ primary_region = 'otp'
   processes = ['app']
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+  size = 'shared-cpu-1x'

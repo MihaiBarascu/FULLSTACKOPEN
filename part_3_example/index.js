@@ -3,22 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
-
-const mongoose = require("mongoose");
-
-const url = process.env.MONGODB_URI;
-console.log(url);
-mongoose.set("strictQuery", false);
-mongoose.connect(url);
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  importance: Boolean,
-});
-
-const Note = mongoose.model("Note", noteSchema);
-
-mongoose.connect(url);
+const Note = require("./models/note");
 
 app.use(express.json());
 app.use(cors());
@@ -72,12 +57,9 @@ app.get("/api/notes", (request, response) => {
 
 app.get("/api/notes/:id", (request, response) => {
   const id = request.params.id;
-  const note = notes.find((n) => n.id === id);
-  if (note) {
+  Note.findById(id).then((note) => {
     response.json(note);
-  } else {
-    response.status(404).end();
-  }
+  });
 });
 
 app.delete("/api/notes/:id", (request, response) => {
@@ -88,6 +70,7 @@ app.delete("/api/notes/:id", (request, response) => {
 
 const generateId = () =>
   notes.length ? Math.max(...notes.map((n) => n.id)) + 1 : 0;
+
 app.post("/api/notes", (request, response) => {
   const body = request.body;
   console.log(body);
@@ -95,13 +78,15 @@ app.post("/api/notes", (request, response) => {
   if (!body.content) {
     return response.status(404).json({ error: "content missing" });
   }
-  const note = {
+
+  const note = new Note({
     content: body.content,
-    id: generateId(),
-    important: Boolean(body.important) || false,
-  };
-  notes = notes.concat(note);
-  response.json(note);
+    important: body.important || false,
+  });
+
+  note.save().then((savedNote) => {
+    response.json(savedNote);
+  });
 });
 
 app.put("/api/notes/:id", (req, res) => {
