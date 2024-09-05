@@ -8,7 +8,7 @@ const Note = require("./models/note");
 app.use(express.json());
 app.use(cors());
 
-morgan.token("jsonData", (req, res) => {
+morgan.token("jsonData", (req) => {
   return JSON.stringify(req.body);
 });
 
@@ -39,7 +39,7 @@ app.get("/api/notes", (request, response) => {
   });
 });
 
-app.get("/api/notes/:id", (request, response) => {
+app.get("/api/notes/:id", (request, response, next) => {
   const id = request.params.id;
   Note.findById(id)
     .then((note) => {
@@ -56,14 +56,11 @@ app.get("/api/notes/:id", (request, response) => {
 
 app.delete("/api/notes/:id", (request, response, next) => {
   Note.findByIdAndDelete(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
 });
-
-const generateId = () =>
-  notes.length ? Math.max(...notes.map((n) => n.id)) + 1 : 0;
 
 app.post("/api/notes", (request, response, next) => {
   const body = request.body;
@@ -83,8 +80,6 @@ app.post("/api/notes", (request, response, next) => {
 
 app.put("/api/notes/:id", (req, res, next) => {
   const { content, important } = req.body;
-
-  const note = { content, important };
 
   Note.findByIdAndUpdate(
     req.params.id,
