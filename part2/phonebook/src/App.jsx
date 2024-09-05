@@ -37,13 +37,18 @@ const App = () => {
     } else {
       const newPerson = { name: newName, number: newNumber };
 
-      services.create(newPerson).then((person) => {
-        setPersons(persons.concat(person));
-        setNotificationMessage(`Added ${person.name}`);
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
-      });
+      services
+        .create(newPerson)
+        .then((person) => {
+          setPersons(persons.concat(person));
+          setNotificationMessage(`Added ${person.name}`);
+          setTimeout(() => {
+            setNotificationMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setNotificationMessage(error.response.data.error);
+        });
 
       setNewNumber("");
       setNewName("");
@@ -107,9 +112,7 @@ const App = () => {
           setTimeout(() => setNotificationMessage(null), 5000);
         })
         .catch((error) => {
-          setNotificationMessage(
-            `Information of ${person.name} has already been removed from server`
-          );
+          setNotificationMessage(error.response.data.error);
         });
     }
   };

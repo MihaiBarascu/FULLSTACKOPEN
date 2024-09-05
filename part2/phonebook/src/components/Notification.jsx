@@ -3,7 +3,13 @@ const Notification = ({ message }) => {
     return null;
   }
 
-  const color = message.includes("already") ? "red" : "green";
+  const wordsInMessage = message.split(" ");
+  console.log(wordsInMessage);
+  const color = wordsInMessage.some(
+    (word) => word === "already" || word === "failed:"
+  )
+    ? "red"
+    : "green";
 
   const style = {
     background: "lightGray",
